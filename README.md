@@ -27,10 +27,15 @@ ln -s /path/to/flash-writer ~/.claude/skills/flash-writer
 
 ## 快速开始
 
+**方式一：`/flash-writer` 命令（推荐）**
+
+在 Claude Code 中输入 `/flash-writer`，AI 会问你几个问题，然后自动在项目根目录生成写作模板，接着进入写作流程。
+
+**方式二：手动创建模板**
+
 1. 复制 `references/writing-template.md` 到你的项目目录
 2. 填写各部分（受众、目标、大纲、风格、参考资料）
-3. 把参考资料放到 `参考资料/` 目录
-4. 告诉 Claude：`@你的文件名.md 按这个要求执行`
+3. 告诉 Claude：`@你的文件名.md 按这个要求执行`
 
 完整案例请看 `references/real-example.md`。
 
@@ -39,6 +44,8 @@ ln -s /path/to/flash-writer ~/.claude/skills/flash-writer
 ```
 flash-writer/
 ├── SKILL.md                        # 主技能文件（规则 + 工作流）
+├── commands/
+│   └── flash-writer.md             # /flash-writer 命令定义
 └── references/
     ├── writing-template.md         # 可复制的写作模板
     ├── real-example.md             # 完整实际案例
