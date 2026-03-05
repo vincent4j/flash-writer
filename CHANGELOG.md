@@ -11,6 +11,8 @@
 - 文件名使用 markdown 链接格式，支持点击直接打开
 - 更新 SKILL.md 触发条件，补充 `/flash-writer` 命令场景
 - 更新 README.md 快速开始说明，匹配新流程
+- 统一目录命名：SKILL.md、writing-template.md、real-example.md 中的 `参考资料/` 全部改为 `references/`
+- 修复 SKILL.md 目录结构：从展示技能自身结构改为展示用户写作项目结构
 
 ### Added
 - 新增 `CHANGELOG.md` 更新日志文件
