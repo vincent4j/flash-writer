@@ -26,6 +26,7 @@ def main() -> int:
         "LICENSE",
         "agents/openai.yaml",
         "commands/flash-writer.md",
+        "references/built-in-style.md",
         "references/writing-template.md",
         "references/real-example.md",
         "references/screenshot-guide.md",
@@ -68,6 +69,11 @@ def main() -> int:
         "L1 硬约束门禁" in skill and "L4 作者与读者终审" in skill,
         "SKILL 缺少四层自检",
     )
+    require(
+        "references/built-in-style.md" in skill
+        and "内置默认风格 > Skill 通用规则" in skill,
+        "SKILL 缺少内置默认风格或优先级",
+    )
 
     command = documents.get("commands/flash-writer.md", "")
     require(
@@ -76,6 +82,7 @@ def main() -> int:
     )
     require("绝不覆盖" in command, "初始化命令缺少保留同名文件约束")
     require("实际绝对路径" in command, "初始化回执未要求使用实际文件路径")
+    require("内置默认风格" in command, "初始化命令未说明默认风格")
 
     template = documents.get("references/writing-template.md", "")
     require("告诉 AI" in template, "写作模板缺少中性 AI 文案")
@@ -94,6 +101,21 @@ def main() -> int:
         "选填项可以全部留空" in template,
         "写作模板未说明选填项可以留空",
     )
+    require(
+        "留空时自动使用 Flash Writer 内置默认风格" in template
+        and "添加自己的写作风格" in template,
+        "写作模板未说明默认风格或自定义方式",
+    )
+
+    built_in_style = documents.get("references/built-in-style.md", "")
+    require(
+        "用户当前要求、当前文章有效要求" in built_in_style,
+        "内置风格缺少覆盖边界",
+    )
+    require(
+        "不复用任何样本文章的主题、项目名称" in built_in_style,
+        "内置风格缺少项目内容隔离说明",
+    )
 
     example = documents.get("references/real-example.md", "")
     require(
@@ -107,6 +129,8 @@ def main() -> int:
     require("确认完稿" in example, "案例缺少显式完稿")
 
     readme = documents.get("README.md", "")
+    require(len(readme.splitlines()) <= 220, "README.md 超过 220 行")
+    require("## 默认风格与自己的风格" in readme, "README 缺少自定义风格说明")
     require("agents/openai.yaml" in readme, "README 缺少 UI 元数据说明")
     require(
         "validate_workflow_contract.py" in readme,
