@@ -1,4 +1,4 @@
 interface:
   display_name: "Flash Writer 闪电写手"
-  short_description: "把写作思路、观点和资料转成长文，并根据 review 持续修订"
-  default_prompt: "使用 $flash-writer，根据我的思路、观点和资料完成长文，写完交给我 review。"
+  short_description: "从完整思路或大致想法开始，协作完成并持续修订长文"
+  default_prompt: "使用 $flash-writer；如果我有完整思路就直接开写，只有大致想法就和我一起梳理。"
