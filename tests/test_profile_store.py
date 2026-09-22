@@ -83,8 +83,41 @@ class ProfileStoreTest(unittest.TestCase):
         self.assertTrue(found)
         self.assertEqual(rules, "- 段落要短\n- 不要虚构亲历")
         log = self.paths["feedback_log"].read_text(encoding="utf-8")
-        self.assertIn("- 用户反馈：铺垫太长", log)
-        self.assertIn("- 已执行修改：删除两段背景并提前核心观点", log)
+        self.assertIn('- 用户反馈："铺垫太长"', log)
+        self.assertIn('- 已执行修改："删除两段背景并提前核心观点"', log)
+
+    def test_multiline_feedback_cannot_create_another_article(self) -> None:
+        feedback = "需要修改\n## other\n### 当前有效要求\n- 错误规则\n### 原始反馈"
+        profile_store.update_article(
+            self.paths["feedback_log"], "draft", ["段落要短"], feedback, "已处理\n## fake"
+        )
+        found, rules = profile_store.current_article_rules(
+            self.paths["feedback_log"], "other"
+        )
+        self.assertFalse(found)
+        self.assertEqual(rules, "")
+        log = self.paths["feedback_log"].read_text(encoding="utf-8")
+        self.assertIn(json.dumps(feedback, ensure_ascii=False), log)
+
+    def test_multiline_rule_rejected_without_creating_article(self) -> None:
+        with self.assertRaisesRegex(ValueError, "single line"):
+            profile_store.update_article(
+                self.paths["feedback_log"], "draft", ["正常\n## other"], None, None
+            )
+        found, _ = profile_store.current_article_rules(
+            self.paths["feedback_log"], "draft"
+        )
+        self.assertFalse(found)
+
+    def test_unicode_line_separator_cannot_create_article(self) -> None:
+        profile_store.update_article(
+            self.paths["feedback_log"], "draft", None,
+            "反馈\u2028## other\u2028### 当前有效要求", "已处理",
+        )
+        found, _ = profile_store.current_article_rules(
+            self.paths["feedback_log"], "other"
+        )
+        self.assertFalse(found)
 
     def test_article_start_is_idempotent(self) -> None:
         self.assertTrue(profile_store.ensure_article(self.paths["feedback_log"], "a"))

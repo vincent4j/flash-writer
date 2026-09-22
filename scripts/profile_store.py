@@ -245,19 +245,23 @@ def update_article(
     feedback: str | None,
     applied_change: str | None,
 ) -> tuple[bool, int, bool]:
+    normalized_rules: list[str] | None = None
+    if rules is not None:
+        normalized_rules = [rule.strip().removeprefix("- ").strip() for rule in rules]
+        normalized_rules = [rule for rule in normalized_rules if rule]
+        if any(len(rule.splitlines()) != 1 for rule in normalized_rules):
+            raise ValueError("rules must each be a single line")
+
     started = ensure_article(path, article)
     lines = path.read_text(encoding="utf-8").splitlines()
     section = article_section_bounds(path, lines, article)
     if section is None:
         raise StateFormatError(path, f"Article section was not created: {article}")
 
-    normalized_rules: list[str] | None = None
     if rules is not None:
         rules_start, rules_end = article_subsection_bounds(
             path, lines, section[0], section[1], "### 当前有效要求"
         )
-        normalized_rules = [rule.strip().removeprefix("- ").strip() for rule in rules]
-        normalized_rules = [rule for rule in normalized_rules if rule]
         replacement = [lines[rules_start], ""]
         replacement.extend(f"- {rule}" for rule in normalized_rules)
         replacement.append("")
@@ -271,10 +275,15 @@ def update_article(
         _, feedback_end = article_subsection_bounds(
             path, lines, section[0], section[1], "### 原始反馈"
         )
+        encoded_feedback = json.dumps(feedback.strip(), ensure_ascii=False)
+        encoded_change = json.dumps(applied_change.strip(), ensure_ascii=False)
+        for separator in ("\x85", "\u2028", "\u2029"):
+            encoded_feedback = encoded_feedback.replace(separator, f"\\u{ord(separator):04x}")
+            encoded_change = encoded_change.replace(separator, f"\\u{ord(separator):04x}")
         entry = [
             "",
-            f"- 用户反馈：{feedback.strip()}",
-            f"- 已执行修改：{applied_change.strip()}",
+            f"- 用户反馈：{encoded_feedback}",
+            f"- 已执行修改：{encoded_change}",
         ]
         lines[feedback_end:feedback_end] = entry
 

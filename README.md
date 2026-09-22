@@ -93,7 +93,7 @@ AI 会先听你自由表达，再根据写作模板中的关键缺口逐步追�
 /flash-writer
 ```
 
-命令会在用户选择的项目中创建或复用唯一的 `references/` 目录，只补充缺失的模板、案例和截图指南，不覆盖已有文件。
+命令会在用户选择的项目中创建或复用唯一的 `references/` 目录，只补充缺失的模板、案例和截图指南，不覆盖已有文件；遇到同名但不属于 Flash Writer 的文件时会报告冲突。
 
 ## 四层完稿自检
 
@@ -125,20 +125,24 @@ AI 能够确定的问题会先修复，只把缺少依据或会改变作者核�
 
 正常写作只加载当前有效规则，不反复读取全部历史。状态初始化、文章反馈更新和旧状态迁移由 [`scripts/profile_store.py`](scripts/profile_store.py) 处理；完整参数可运行 `python3 scripts/profile_store.py --help` 查看。
 
+这些文件保存在本机，可能包含你的写作偏好和原始反馈。卸载 Skill 不会删除它们；确认不再需要后，可自行删除 `~/.flash-writer/`。工作流保存到项目 `references/` 的网页资料和 `assets/` 的截图也由你管理；提交项目到 Git 前请检查是否包含私人或需要登录的内容。
+
 ## 安装
 
-将整个仓库放入 AI 工具能够发现的 Skill 目录，不要只复制 `SKILL.md`。
+需要 Python 3.10 或更新版本。将整个仓库放入 AI 工具能够发现的 Skill 目录，不要只复制 `SKILL.md`。例如在 Codex 中手动安装：
 
-```text
-~/.agents/skills/flash-writer/
+```bash
+mkdir -p ~/.codex/skills
+git clone https://github.com/vincent4j/flash-writer.git ~/.codex/skills/flash-writer
+python3 ~/.codex/skills/flash-writer/scripts/profile_store.py --help
 ```
 
-安装后可以使用 `$flash-writer`；支持命令注册的环境也可以使用 `/flash-writer`。
+在使用 `~/.agents/skills/` 的工具中，把上面的目标目录换成 `~/.agents/skills/flash-writer`。安装后重新打开 AI 工具，并用 `$flash-writer` 调用。`commands/flash-writer.md` 是命令入口定义；只有宿主工具已注册该命令时，`/flash-writer` 才可用。
 
 本地开发推荐使用符号链接，让安装路径直接指向源码仓库：
 
 ```text
-~/.agents/skills/flash-writer -> <Flash Writer 源码仓库>
+~/.codex/skills/flash-writer -> <Flash Writer 源码仓库>
 ```
 
 ## 主要文件
@@ -150,6 +154,7 @@ AI 能够确定的问题会先修复，只把缺少依据或会改变作者核�
 - [`references/real-example.md`](references/real-example.md)：完整协作案例。
 - [`references/screenshot-guide.md`](references/screenshot-guide.md)：需要 AI 截图时使用。
 - [`scripts/profile_store.py`](scripts/profile_store.py)：写作状态工具。
+- [`scripts/project_setup.py`](scripts/project_setup.py)：准备项目参考文件并检查同名冲突。
 - [`agents/openai.yaml`](agents/openai.yaml)：Codex UI 元数据。
 
 ## 开发验证
@@ -164,7 +169,7 @@ PYTHONPYCACHEPREFIX=/tmp/flash-writer-test-pycache \
 python3 scripts/validate_workflow_contract.py
 ```
 
-[`scripts/validate_workflow_contract.py`](scripts/validate_workflow_contract.py) 检查 Skill、命令、模板、案例和 README 的关键约定是否一致。提交前还应运行当前环境的 Skill 校验器。
+[`scripts/validate_workflow_contract.py`](scripts/validate_workflow_contract.py) 检查 Skill、命令、模板、案例和 README 的关键约定是否一致。GitHub Actions 也会运行这些检查；提交前还应运行当前环境的 Skill 校验器。
 
 ## 许可证
 

@@ -31,7 +31,9 @@ def main() -> int:
         "references/real-example.md",
         "references/screenshot-guide.md",
         "scripts/profile_store.py",
+        "scripts/project_setup.py",
         "tests/test_profile_store.py",
+        "tests/test_project_setup.py",
     )
     for relative_path in required_files:
         require((ROOT / relative_path).is_file(), f"缺少文件：{relative_path}")
@@ -126,6 +128,7 @@ def main() -> int:
         "初始化命令未声明单一 references",
     )
     require("绝不覆盖" in command, "初始化命令缺少保留同名文件约束")
+    require("reference_conflict" in command, "初始化命令缺少同名冲突处理")
     require("实际绝对路径" in command, "初始化回执未要求使用实际文件路径")
     require("内置默认风格" in command, "初始化命令未说明默认风格")
     require(

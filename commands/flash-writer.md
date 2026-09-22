@@ -37,13 +37,12 @@ description: "初始化闪电写手工作环境，可直接使用完整思路或
 
 用户项目始终只使用一个 `references/` 目录：
 
-- 目录不存在时创建；已经存在时直接复用
-- 分别检查 `writing-template.md`、`real-example.md` 和 `screenshot-guide.md`
-- 只复制缺失文件；同名文件已经存在时保留原文件，绝不覆盖，也不创建第二个目录
+- 使用本技能目录中的 `scripts/project_setup.py --project-dir <用户选择的目录>` 准备文件。它会检查 `writing-template.md`、`real-example.md` 和 `screenshot-guide.md`，只复制缺失文件；属于 Flash Writer 的同名文件保留原文件，绝不覆盖，也不创建第二个目录。
+- 如果返回 `reference_conflict`，不要继续初始化，也不要把冲突文件当作本技能模板。告知用户冲突的实际路径，请用户选择其他项目目录或自行处理该文件；处理后重新运行。
 
 使用本技能目录中的 `scripts/profile_store.py init --project-dir <用户选择的目录>` 初始化个性化写作档案。该命令只创建缺失文件，不覆盖已有档案；项目状态保存在当前用户的 `~/.flash-writer/projects/`，不会在用户选择的目录中创建 `.flash-writer/`。不要把个人规则写入 Skill 本体。
 
-文件准备完成后，向用户输出以下内容；每个文件根据实际情况标注“已创建”或“已保留”：
+文件准备完成后，依据脚本返回的 `created` 或 `preserved` 向用户输出以下内容；每个文件根据实际情况标注“已创建”或“已保留”：
 
 ```
 已准备 `references/`：
