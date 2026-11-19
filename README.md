@@ -1,175 +1,117 @@
-# Flash Writer 闪电写手
+<h1 align="center">Flash Writer 闪电写手</h1>
 
-Flash Writer 是一套 AI 长文写作工作流，适用于文章、教程、演讲稿和产品介绍。
+<p align="center"><strong>把零散的想法写成自己风格的长文</strong></p>
 
-> 作者负责思路、观点、资料和最终判断；AI 负责完整成稿。作者只需 review，AI 负责修改并把有效要求延续到后文。
+<p align="center">
+  <a href="#why">为什么需要</a> ·
+  <a href="#install">安装</a> ·
+  <a href="#features">能帮你做什么</a> ·
+  <a href="#quick-start">快速上手</a> ·
+  <a href="#style">写作风格</a> ·
+  <a href="#files">项目文件</a>
+</p>
 
-## 它能做什么
+---
 
-- 根据写作思路和参考资料完成整篇长文，不要求作者先写成段落。
-- 先确认受众、目标和大纲，再逐节写作，减少整篇返工。
-- 借鉴参考资料中的事实和结构，但重新组织和表达，不复制原文。
-- 根据自然语言 review 重写正文，并让同类要求在后续章节持续生效。
-- 完稿前执行四层自检：硬约束、作者风格、内容事实、作者与读者终审。
-- 把确认可复用的写作经验留给下一篇文章。
+<a id="why"></a>
 
-Flash Writer 始终只有一套正式写作流程，但提供两种准备写作思路的入口：
+## 为什么需要闪电写手？
 
-- **直接开写**：我已经准备好完整的写作思路，确认后按既定流程开始写作。
-- **一起梳理**：我先说大致想法，AI 帮我逐步整理成完整的写作思路，确认后再开始写作。
+- **有观点，手里只有几句笔记。** 你知道想说什么，但受众、例子和行文顺序还没想清楚，迟迟写不出第一段。
+- **资料都齐了，初稿还是写偏。** 你把提纲、案例和链接一股脑交给 AI，等全文出来才发现重点放错了，只能从头改。
+- **稿子读着顺，却不像自己写的。** 你平时会先讲一个亲历的例子，AI 却习惯先铺几段背景。
 
-两种入口最终都会形成同一份完整写作思路，使用相同的写作流程和质量标准。
+闪电写手用写作思路模板，带你把一个想法梳理成可写的大纲。先想清楚写给谁、想说什么、哪些该舍掉、还缺什么例子，再从整篇结构到每节怎么展开逐层确认。你点头后，AI 用你的口吻写成稿。
 
-调用时已经附上或指定思路文件，AI 会自动使用该文件及其所在目录，不再询问目录和入口。只说“直接开写”但没有文件时，AI 只询问一次文件，拿到后再开始；明确说“一起梳理”时也不再重复选择。只有裸命令且意图不明时才展示两个入口。
+<a id="install"></a>
 
-## 工作流程
+### 安装
 
-```text
-直接提供完整思路 ─────────┐
-                           ├→ 确认完整写作思路
-先说大致想法 → AI 对话梳理 ┘
-→ 对齐任务和资料
-→ 推荐并确认大纲
-→ AI 逐节写正文
-→ 作者 review，AI 重写
-→ L1–L4 四层自检
-→ 作者确认完稿
-→ 沉淀可复用经验
+在写作目录打开终端，运行下面的命令。安装器会检测可用的 Agent，出现选择时选你使用的那个。安装命令需要 Node.js 22.20 或更新版本，写作流程需要 Agent 能访问写作目录并运行 Python 3.10 或更新版本。 [安装器说明](https://github.com/vercel-labs/skills#install-a-skill)
+
+```bash
+npx skills@latest add vincent4j/flash-writer --skill flash-writer
 ```
 
-正文阶段，作者可以直接说“铺垫太长”“观点写弱了”“这个案例不合适”。AI 会修改正文、检查同类问题，并把新要求应用到后续章节。作者不需要亲自重写段落。
+安装后在该目录打开新的 Agent 会话，发送「使用 flash-writer，和我一起梳理一篇文章」。看到 Agent 开始了解你想写什么，就可以继续说你的想法。
 
-## 快速开始
+#### 在你用之前，你可能想知道
+
+| 你可能会问 | 项目的实际情况 |
+| --- | --- |
+| 安装器没列出我的 Agent，或者 Agent 找不到 Skill？ | 按宿主的安装说明，把整个仓库克隆到它能发现的 Skills 目录，再开一个会话。确保 `SKILL.md`、`references/` 和 `scripts/` 都在 Skill 目录中。 |
+| 装好了，为什么找不到 `/flash-writer`？ | 确认宿主支持的调用方式。Claude Code 可以通过同名 Skill 调用 `/flash-writer`，Codex 可以用 `$flash-writer`。下文的项目目录选择和文件准备提示来自仓库提供的独立初始化命令，需由宿主注册。 [Claude Code 的调用说明](https://code.claude.com/docs/en/skills) · [初始化命令定义](commands/flash-writer.md) |
+
+<a id="features"></a>
+
+## 能帮你做什么？
+
+| 应用场景 | 原来怎么做 | 闪电写手怎么处理 | 你得到什么 |
+| --- | --- | --- | --- |
+| 只有一个选题或大致想法 | 自己琢磨写给谁、先讲什么 | 通过几轮对话问清受众、核心观点和支撑材料，再整理成写作思路 | 一份可以确认和修改的写作思路 |
+| 已经有提纲、案例或参考资料 | 把资料发给 AI，等整篇初稿出来再纠偏 | 先确认大纲和各节用到的资料，再逐节写正文 | 按你确认的顺序和重点展开的长文 |
+| 想用自己的口吻写 | 在提示词里形容自己的文风，等拿到全文再判断像不像 | 从你给的文章或写法说明里提炼风格，用第一节请你确认 | 按你认可的语气和段落节奏写出的正文 |
+| 全文写完，准备定稿 | 自己对照要求查漏、核对引用 | 检查硬约束、作者风格、内容与事实，以及作者意图和读者理解 | 正文、四层自检报告，以及需要你拍板的取舍 |
+
+<a id="quick-start"></a>
+
+## 快速上手
+
+在 Agent 对话框任选一个入口。两条路径最终都形成同一份完整写作思路，使用相同的写作流程和质量标准。
 
 ### 直接开写
 
-把文件交给 AI：
+把写作思路文件附到对话里，或告诉 Agent 它的路径，然后发送：
 
 ```text
-使用 $flash-writer，根据 @写作思路.md 完成这篇文章。正文由你写，我负责 review。
+使用 flash-writer，按写作思路.md 完成这篇教程。请先给我大纲，等我确认后再写正文。
 ```
 
-AI 会完整读取已有内容，只指出会导致整篇返工的关键缺失、矛盾和事实边界问题，不会重复询问已经写清楚的信息。
+Flash Writer 会自动使用该文件及其所在目录。只说「直接开写」时，它会只询问一次文件。你可以用[写作思路模板](references/writing-template.md)整理材料，每节写下观点和要用的资料即可。
 
 ### 一起梳理
 
-如果只有一个主题、观察或零散想法，直接告诉 AI：
-
 ```text
-使用 $flash-writer，一起梳理。我想写一篇关于……的文章。
+使用 flash-writer，和我一起梳理。我想写一篇给新任主管看的复盘文章，讲第一次主持周会时踩过的坑。
 ```
 
-AI 会先听你自由表达，再根据写作模板中的关键缺口逐步追问。通常每轮最多问两个高影响问题，先确认高层论证路径或章节骨架，再严格按 [`references/writing-template.md`](references/writing-template.md) 的十个原名标题整理完整写作思路。高层骨架写进“写作思路”，不另造栏目；“写作风格”和“格式偏好”保持独立，没有内容的选填部分也填写“暂无”或“无特殊要求”。未确认的补充会标为 `【AI 建议，待确认】`，不确定事实会标为待核实；最终确认后移除临时建议标记，这份完整模板成为权威输入。AI 随后完成个人档案、项目资料和参考来源的读取，只展示读取摘要；仅在发现新冲突时追问，新提取且尚未确认的风格特征才确认。最后把已确认骨架细化成包含章节任务、证据、案例和资料用途的可写大纲。
+AI 会先了解你想写什么，再问少量会影响全文的问题。整理出的写作思路保留模板的十个原名标题，AI 补充的内容会标记为 `【AI 建议，待确认】`。你确认后，这份完整模板成为权威输入，AI 据此准备资料和细化大纲。
 
-### 写作思路模板
+如果宿主已注册仓库提供的初始化命令，单独输入 `/flash-writer` 后会先请你选择项目目录。目录准备完成后，选择下面的一项：
 
-复制 [`references/writing-template.md`](references/writing-template.md) 到写作目录，填写后交给 AI。模板中的内容分为：
+```text
+请选择一种开始方式：
 
-| 类型 | 内容 |
-| --- | --- |
-| 必须明确 | 原则与边界、受众、目标、核心观点、写作思路 |
-| 按需填写 | 真实案例与事实、内容参考、必须包含、禁止事项 |
-| 可以留空 | 写作风格、格式偏好、图片素材 |
+- **直接开写**：我已经准备好完整的写作思路，确认后按既定流程开始写作。
+- **一起梳理**：我先说大致想法，AI 帮我逐步整理成完整的写作思路，确认后再开始写作。
+```
 
-“写作风格”留空时使用内置默认风格，其他非核心部分由 AI 根据文章需要判断。模板仍支持在每节使用 `》` 标记处理指令。
+### 从修改到定稿
+
+写正文时，可以直接说「把第一节的背景压成一段，后面每节也先给结论」。AI 会重写当前段落，并把适用的要求用到后文。确认整篇可以交付后，回复「确认完稿」。你同意复用的风格规则可以留到下一篇。 [完整协作案例](references/real-example.md)
+
+<a id="style"></a>
 
 ## 默认风格与自己的风格
 
-“写作风格”留空时，Flash Writer 自动使用 [`references/built-in-style.md`](references/built-in-style.md)。这份内置风格强调真实问题、明确判断、自然口语、短段落、事实边界和移动端阅读。
+首次使用时，可以留空「写作风格」，由 [内置风格](references/built-in-style.md) 提供默认写法。你也可以直接说明偏好，例如「少写背景，每段只讲一件事」，或给 AI 一篇自己写过的文章或本地 Markdown 文件，让它提取风格规则供你确认。
 
-添加自己的风格有三种方式：
+<a id="files"></a>
 
-1. 在模板中直接描述规则，例如“判断更直接”“少写背景”“段落保持短”。
-2. 提供一篇或多篇自己写的文章链接或本地 Markdown 文件，AI 会提取风格特征并请你确认。
-3. 写作过程中直接 review；AI 会重写正文，并把新要求应用到后续章节。
+## 项目结构与新增文件
 
-文章级要求和风格样本会覆盖内置风格。确认完稿时，可以把真正可跨文章复用的规则保存到个人写作档案，成为以后优先于内置风格的长期风格。
-
-### 使用 `/flash-writer`
-
-在支持命令的环境中输入：
-
-```text
-/flash-writer
-```
-
-命令会在用户选择的项目中创建或复用唯一的 `references/` 目录，只补充缺失的模板、案例和截图指南，不覆盖已有文件；遇到同名但不属于 Flash Writer 的文件时会报告冲突。
-
-## 四层完稿自检
-
-| 层级 | 检查重点 |
-| --- | --- |
-| L1 硬约束 | 章节、顺序、指定对象、篇幅、格式、图片和禁用项 |
-| L2 作者风格 | 语气、节奏、转场、全文一致性和 AI 套话 |
-| L3 内容与事实 | 观点支撑、结构、数据、引用和事实可靠性 |
-| L4 作者与读者终审 | 是否准确表达作者观点，读者是否容易理解 |
-
-AI 能够确定的问题会先修复，只把缺少依据或会改变作者核心观点的取舍交给作者。用户明确回复“确认完稿”后，才锁定最终版本并整理长期经验。
-
-## 写作经验如何保存
-
-个性化状态保存在当前用户目录，不写入文章目录或代码仓库：
-
-```text
-~/.flash-writer/
-├── writing-profile.md
-└── projects/
-    └── <项目名>-<路径哈希>/
-        ├── project-context.md
-        └── feedback-log.md
-```
-
-- `writing-profile.md`：跨文章复用的写作规则。
-- `project-context.md`：只在当前项目延续的背景和约束。
-- `feedback-log.md`：当前文章的有效要求和反馈历史。
-
-正常写作只加载当前有效规则，不反复读取全部历史。状态初始化、文章反馈更新和旧状态迁移由 [`scripts/profile_store.py`](scripts/profile_store.py) 处理；完整参数可运行 `python3 scripts/profile_store.py --help` 查看。
-
-这些文件保存在本机，可能包含你的写作偏好和原始反馈。卸载 Skill 不会删除它们；确认不再需要后，可自行删除 `~/.flash-writer/`。工作流保存到项目 `references/` 的网页资料和 `assets/` 的截图也由你管理；提交项目到 Git 前请检查是否包含私人或需要登录的内容。
-
-## 安装
-
-需要 Python 3.10 或更新版本。将整个仓库放入 AI 工具能够发现的 Skill 目录，不要只复制 `SKILL.md`。例如在 Codex 中手动安装：
-
-```bash
-mkdir -p ~/.codex/skills
-git clone https://github.com/vincent4j/flash-writer.git ~/.codex/skills/flash-writer
-python3 ~/.codex/skills/flash-writer/scripts/profile_store.py --help
-```
-
-在使用 `~/.agents/skills/` 的工具中，把上面的目标目录换成 `~/.agents/skills/flash-writer`。安装后重新打开 AI 工具，并用 `$flash-writer` 调用。`commands/flash-writer.md` 是命令入口定义；只有宿主工具已注册该命令时，`/flash-writer` 才可用。
-
-本地开发推荐使用符号链接，让安装路径直接指向源码仓库：
-
-```text
-~/.codex/skills/flash-writer -> <Flash Writer 源码仓库>
-```
-
-## 主要文件
-
-- [`SKILL.md`](SKILL.md)：权威工作流和执行规则。
-- [`commands/flash-writer.md`](commands/flash-writer.md)：`/flash-writer` 初始化流程。
-- [`references/writing-template.md`](references/writing-template.md)：写作思路模板。
-- [`references/built-in-style.md`](references/built-in-style.md)：未指定风格时使用的内置默认风格。
-- [`references/real-example.md`](references/real-example.md)：完整协作案例。
-- [`references/screenshot-guide.md`](references/screenshot-guide.md)：需要 AI 截图时使用。
-- [`scripts/profile_store.py`](scripts/profile_store.py)：写作状态工具。
-- [`scripts/project_setup.py`](scripts/project_setup.py)：准备项目参考文件并检查同名冲突。
-- [`agents/openai.yaml`](agents/openai.yaml)：Codex UI 元数据。
+- **仓库自带**　[写作思路模板](references/writing-template.md)、[协作案例](references/real-example.md)、[截图指南](references/screenshot-guide.md)和 [Skill 入口](SKILL.md)。Codex 界面信息见 [agents/openai.yaml](agents/openai.yaml)。
+- **安装时**　Skill 和配套文件放在所选 Agent 的 Skills 目录，由 Agent 加载。
+- **初始化项目时**　通过仓库的命令初始化时，模板、案例和截图指南会补到写作项目的 `references/`。已有的 Flash Writer 文件会保留，遇到其他同名文件会提示冲突。
+- **使用在线资料或截图时**　工作流会把需要留存的参考资料放进写作项目的 `references/`，把生成的截图放进 `assets/<文章名>/`。
+- **初始化后**　个人写作档案和项目上下文保存在 `~/.flash-writer/`，写作中的反馈也会记在这里。卸载 Skill 后，这些本地文件仍会保留。
 
 ## 开发验证
 
 ```bash
-PYTHONPYCACHEPREFIX=/tmp/flash-writer-pycache \
-  python3 -m py_compile scripts/profile_store.py
-
-PYTHONPYCACHEPREFIX=/tmp/flash-writer-test-pycache \
-  python3 -m unittest discover -s tests -v
-
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 python3 scripts/validate_workflow_contract.py
 ```
-
-[`scripts/validate_workflow_contract.py`](scripts/validate_workflow_contract.py) 检查 Skill、命令、模板、案例和 README 的关键约定是否一致。GitHub Actions 也会运行这些检查；提交前还应运行当前环境的 Skill 校验器。
 
 ## 许可证
 
